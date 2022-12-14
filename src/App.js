@@ -1,45 +1,72 @@
 import './App.css';
-import { useEffect, useState } from "react";
+import { Component } from "react";
+import { render } from '@testing-library/react';
 
-function App() {
-  function randomInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+// დავალება 2
+
+
+
+export default class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      users: [],};
   }
- 
- const usersFromBe=[{name:"salome",age:randomInteger(10,60),id:123456},{name:"nika",age:randomInteger(10,60),id:23456},{name:"anano",age:randomInteger(10,60),id:345678}]
-   
-  
+onAddUser=()=>{
+const newUser={
+  name:"salome",
+  age: Math.floor(Math.random() * (60 - 10+1) + 10),
+  id: new Date().toString()
+};
+this.setState((prevState)=>({
+ users:[...prevState.users,newUser]
+}))
+}
 
-  const [users, setUsers] = useState([]);
- 
+onDeleteUser =(id)=>{
+this.setState((prevState)=>({
+users:prevState.users.filter((user)=>user.id !==id)
+}))
+console.log("del")
+}
 
-// console.log(users.name)
+onUpdateUser =(id)=>{
+  this.setState((prevState)=>{
+    const newUserList= prevState.users.reduce((acc,current)=>{
+      if(current.id===id){
+        current.age=Math.floor(Math.random() * 40)
+        current.name="nika"
+        console.log(current)
 
-const userFromBeMap=()=>{
-  usersFromBe.map((elem, index) => {
-    console.log("elem", elem.name)
-  
-  return(<li key={index}>{elem.name}</li>) 
+      }
+        return [...acc,current]
+      
+    },[])
+    return{
+      users:newUserList
+    }
   })
 }
- 
+
+render(){
   return (
-    <>
-    
-     {users.map((elem, index) => {
-            console.log("elem",elem)
+    <div>
+      <button onClick={this.onAddUser}>add user</button>
+      {this.state.users.map((user)=>{
+        return(
+          <div key={user.id} style={{display:"flex",justifyContent:"space-between"}}>
+            <h1>{user.name}</h1>
+            <h1>{user.age}</h1>
+            <button onClick={()=>this.onUpdateUser(user.id)}>update</button>
+            <button onClick={()=>this.onDeleteUser(user.id)}>delete</button>
 
-      return(<li key={index}>{elem}</li>) 
-    })}
-      
-   <button onClick={()=>{setUsers([...users,userFromBeMap()]);alert("added")
-
-}} >add</button>
-<button onClick={()=>{setUsers([]);alert("‘deleted’")
-}} >delete</button>
-  
-    </>
-  );
+            </div>
+        )
+      })}
+    </div>
+  )
+}
 }
 
-export default App;
+
+  
